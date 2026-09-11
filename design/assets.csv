@@ -1,0 +1,8 @@
+id,role,type,description,size/ratio,style line ref,source
+sky,chapter 1,image,upper storm crop,16:9,design-brief.md,generated storm reuse
+ruins,chapter 2 and 4,image,Job in ashes,16:9,design-brief.md,generate
+friends,chapter 3,image,circular debate,16:9,design-brief.md,generate
+storm,cover and chapter 5,image,vertical whirlwind,3:2,design-brief.md,generate
+creatures,chapter 5,image,Behemoth and Leviathan,16:9,design-brief.md,generate
+silence,chapter 6,image,empty stones at dawn,16:9,design-brief.md,generate
+ambient,optional sound,audio,procedural low wind and soft page tone,Web Audio,design-brief.md,code

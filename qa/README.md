@@ -1,0 +1,1 @@
+Run npm install --no-save playwright @axe-core/playwright then npx playwright install chromium. Start bun run dev, then node qa/playthrough.cjs and node qa/accessibility.cjs. Set APP_URL to target a deployment; set CHROMIUM_PATH only for a custom browser executable. Generated screenshots are local QA artifacts.

@@ -1,0 +1,96 @@
+import {useEffect,useRef,useState} from "react";
+import {landmarks} from "./landmarks";
+import type {Landmark} from "./landmarks";
+type Props={chapter:number;activePoint:number;reduced:boolean;onInspect:(id:string)=>void;inspected:string[];cover?:boolean};
+export default function Stage3D({chapter,activePoint,reduced,onInspect,inspected,cover=false}:Props){
+ const host=useRef<HTMLDivElement>(null);const api=useRef<{focus:(i:number)=>void;reset:()=>void;rotate:(n:number)=>void;zoom:(n:number)=>void}|null>(null);
+ const [status,setStatus]=useState("loading");const [error,setError]=useState("");const [selected,setSelected]=useState<number|null>(null);const [ready,setReady]=useState(false);
+ const callback=useRef(onInspect);callback.current=onInspect;
+ const active=useRef(activePoint);active.current=activePoint;
+ const [quality,setQuality]=useState<"balanced"|"low">("balanced");
+ useEffect(()=>setSelected(null),[activePoint]);
+ useEffect(()=>{
+  let cancelled=false,dispose=()=>{};setStatus("loading");setReady(false);setSelected(null);
+  const node=host.current;if(!node)return;
+  (async()=>{
+   const [THREE,{OrbitControls},{GLTFLoader},{mergeGeometries}]=await Promise.all([import("three"),import("three/addons/controls/OrbitControls.js"),import("three/addons/loaders/GLTFLoader.js"),import("three/addons/utils/BufferGeometryUtils.js")]);
+   if(cancelled)return;
+   let renderer:import("three").WebGLRenderer;
+   try{renderer=new THREE.WebGLRenderer({antialias:quality!=="low",alpha:false,powerPreference:"high-performance"});}catch{throw new Error("이 기기에서 WebGL 3D를 시작할 수 없습니다.");}
+   renderer.setPixelRatio(Math.min(window.devicePixelRatio,quality==="low"?1:1.5));
+   renderer.setSize(node.clientWidth,node.clientHeight);renderer.shadowMap.enabled=quality!=="low";renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+   renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.3;
+   node.appendChild(renderer.domElement);renderer.domElement.setAttribute("aria-label","드래그로 회전하고 휠 또는 두 손가락으로 확대하는 3D 장면");renderer.domElement.setAttribute("role","img");
+   const scene=new THREE.Scene();scene.background=new THREE.Color(chapter===5?0x1c2938:0x0d1826);scene.fog=new THREE.FogExp2(chapter===5?0x1c2938:0x0d1826,.025);
+   const camera=new THREE.PerspectiveCamera(42,node.clientWidth/node.clientHeight,.1,180);
+   const defaultCamera=new THREE.Vector3(12,10,16);camera.position.copy(defaultCamera);
+   const controls=new OrbitControls(camera,renderer.domElement);controls.target.set(0,1,0);controls.enableDamping=!reduced;controls.dampingFactor=.09;controls.minDistance=3.3;controls.maxDistance=33;controls.maxPolarAngle=Math.PI*.48;controls.minPolarAngle=.15;controls.enablePan=true;controls.panSpeed=.65;controls.autoRotate=cover&&!reduced;controls.autoRotateSpeed=.22;
+   scene.add(new THREE.HemisphereLight(0xb8d8f4,0x1b1714,2));
+   const light=new THREE.DirectionalLight(chapter===5?0xffe5bd:0xd1e8ff,3.4);light.position.set(-7,13,8);light.castShadow=true;
+   light.shadow.mapSize.set(1024,1024);light.shadow.camera.left=-11;light.shadow.camera.right=11;light.shadow.camera.top=11;light.shadow.camera.bottom=-11;light.shadow.normalBias=.045;scene.add(light);
+   const rim=new THREE.DirectionalLight(0x547dab,2.1);rim.position.set(8,4,-9);scene.add(rim);
+   const base=new THREE.Mesh(new THREE.PlaneGeometry(250,250),new THREE.MeshStandardMaterial({color:0x12202d,roughness:1}));base.rotation.x=-Math.PI/2;base.position.y=-.5;base.receiveShadow=true;scene.add(base);
+   const points=landmarks[chapter];const markers:import("three").Mesh[]=[];
+   const ringGeometry=new THREE.TorusGeometry(.18,.035,8,24);
+   const hitGeometry=new THREE.SphereGeometry(.5,10,8);
+   const invisible=new THREE.MeshBasicMaterial({visible:false});
+   for(let i=0;i<points.length;i++){
+    const marker=new THREE.Mesh(ringGeometry,new THREE.MeshBasicMaterial({color:0xdcefff,transparent:true,opacity:.9,depthTest:false}));marker.position.fromArray(points[i].position);marker.position.y+=.45;marker.renderOrder=9;marker.userData.index=i;scene.add(marker);markers.push(marker);
+    const hit=new THREE.Mesh(hitGeometry,invisible);hit.position.copy(marker.position);hit.userData.index=i;scene.add(hit);
+   }
+   let targetPosition:import("three").Vector3|null=null,targetLook:import("three").Vector3|null=null;
+   const focus=(i:number)=>{const p=points[i];if(!p)return;setSelected(i);const center=new THREE.Vector3().fromArray(p.position);targetLook=center;targetPosition=center.clone().add(new THREE.Vector3(6.5,5,8.5));if(reduced){camera.position.copy(targetPosition);controls.target.copy(center);targetPosition=null;targetLook=null;}controls.autoRotate=false;};
+   const reset=()=>{camera.position.copy(defaultCamera);controls.target.set(0,1,0);targetPosition=null;targetLook=null;setSelected(null);};
+   api.current={focus,reset,rotate:(n)=>{const offset=camera.position.clone().sub(controls.target);offset.applyAxisAngle(new THREE.Vector3(0,1,0),n);camera.position.copy(controls.target).add(offset);},zoom:(n)=>{camera.position.sub(controls.target).multiplyScalar(n).add(controls.target);}};
+   const raycaster=new THREE.Raycaster();const pointer=new THREE.Vector2();let downX=0,downY=0;
+   const down=(e:PointerEvent)=>{downX=e.clientX;downY=e.clientY;targetPosition=null;targetLook=null;};
+   const up=(e:PointerEvent)=>{if(Math.hypot(e.clientX-downX,e.clientY-downY)>7)return;const r=renderer.domElement.getBoundingClientRect();pointer.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(scene.children,false).filter(h=>typeof h.object.userData.index==="number");if(hits.length)focus(hits[0].object.userData.index);};
+   renderer.domElement.addEventListener("pointerdown",down);renderer.domElement.addEventListener("pointerup",up);
+   const key=(e:KeyboardEvent)=>{if(!node.parentElement?.contains(document.activeElement))return;if((e.target as HTMLElement).closest("button,select"))return;const map:Record<string,()=>void>={KeyA:()=>api.current?.rotate(.12),ArrowLeft:()=>api.current?.rotate(.12),KeyD:()=>api.current?.rotate(-.12),ArrowRight:()=>api.current?.rotate(-.12),KeyW:()=>api.current?.zoom(.93),ArrowUp:()=>api.current?.zoom(.93),KeyS:()=>api.current?.zoom(1.07),ArrowDown:()=>api.current?.zoom(1.07),KeyR:reset};if(map[e.code]){e.preventDefault();map[e.code]();}};
+   window.addEventListener("keydown",key);
+   const particleCount=quality==="low"?180:500;const positions=new Float32Array(particleCount*3);const seed=new Float32Array(particleCount*3);
+   for(let i=0;i<particleCount;i++){const a=i*2.39996;const r=2+(i%67)/67*13;seed[i*3]=a;seed[i*3+1]=r;seed[i*3+2]=(i%41)/41*16;positions[i*3]=Math.cos(a)*r;positions[i*3+1]=seed[i*3+2];positions[i*3+2]=Math.sin(a)*r;}
+   const particlesGeometry=new THREE.BufferGeometry();particlesGeometry.setAttribute("position",new THREE.BufferAttribute(positions,3));
+   const particles=new THREE.Points(particlesGeometry,new THREE.PointsMaterial({color:0xbacde0,size:chapter===4?.045:.025,transparent:true,opacity:chapter===4?.6:.4,depthWrite:false}));scene.add(particles);
+   let model:import("three").Object3D|null=null;
+   const disposable:import("three").BufferGeometry[]=[];
+   let raf=0,lastTime=0;const started=performance.now();let frames=0,frameStart=performance.now();let fps=0;
+   const draw=(now:number)=>{
+    if(cancelled)return;raf=requestAnimationFrame(draw);if(document.hidden)return;if(quality==="low"&&now-lastTime<32)return;lastTime=now;
+    if(targetLook&&targetPosition){controls.target.lerp(targetLook,.09);camera.position.lerp(targetPosition,.09);if(camera.position.distanceTo(targetPosition)<.02){targetLook=null;targetPosition=null;}}
+    controls.update();for(let i=0;i<markers.length;i++){markers[i].quaternion.copy(camera.quaternion);markers[i].scale.setScalar(i===active.current?1.4:1);}
+    const t=reduced?0:(now-started)*.00012;
+    if(!reduced){for(let i=0;i<particleCount;i++){const a=seed[i*3]+t*(chapter===4?3:.25);const r=seed[i*3+1];positions[i*3]=Math.cos(a)*r;positions[i*3+2]=Math.sin(a)*r;positions[i*3+1]=(seed[i*3+2]+t*(chapter===4?4:.2))%16;}particlesGeometry.attributes.position.needsUpdate=true;}
+    renderer.render(scene,camera);frames++;if(now-frameStart>1000){fps=frames;frames=0;frameStart=now;}
+    if(new URLSearchParams(window.location.search).has("debug")){node.dataset.renderStats=JSON.stringify({fps,calls:renderer.info.render.calls,triangles:renderer.info.render.triangles,model:!!model,chapter});}
+   };
+   const resize=new ResizeObserver(()=>{if(node.clientWidth<1||node.clientHeight<1)return;camera.aspect=node.clientWidth/node.clientHeight;camera.updateProjectionMatrix();renderer.setSize(node.clientWidth,node.clientHeight);});resize.observe(node);
+   const contextLost=(e:Event)=>{e.preventDefault();setStatus("error");setError("3D 그래픽 연결이 끊겼습니다. 품질을 낮추거나 텍스트 모드로 이어갈 수 있습니다.");};renderer.domElement.addEventListener("webglcontextlost",contextLost);
+   dispose=()=>{cancelAnimationFrame(raf);resize.disconnect();window.removeEventListener("keydown",key);renderer.domElement.removeEventListener("pointerdown",down);renderer.domElement.removeEventListener("pointerup",up);renderer.domElement.removeEventListener("webglcontextlost",contextLost);controls.dispose();scene.traverse(o=>{if(o instanceof THREE.Mesh||o instanceof THREE.Points){o.geometry.dispose();const mats=Array.isArray(o.material)?o.material:[o.material];mats.forEach(m=>m.dispose());}});disposable.forEach(g=>g.dispose());renderer.dispose();renderer.domElement.remove();api.current=null;};
+   raf=requestAnimationFrame(draw);
+   const gltf=await new GLTFLoader().loadAsync("./assets/job-worlds.glb");
+   if(cancelled){gltf.scene.traverse(o=>{if(o instanceof THREE.Mesh){o.geometry.dispose();(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose());}});return;}
+   const root=gltf.scene.getObjectByName("CHAPTER_"+chapter);if(!root)throw new Error("3D 장면을 찾지 못했습니다.");
+   root.removeFromParent();root.position.set(0,0,0);root.updateMatrixWorld(true);
+   const batches=new Map<string,{material:import("three").Material;geometries:import("three").BufferGeometry[]}>();
+   root.traverse(o=>{if(!(o instanceof THREE.Mesh))return;const material=Array.isArray(o.material)?o.material[0]:o.material;let geo=o.geometry.clone().applyMatrix4(o.matrixWorld);if(geo.index){const indexed=geo;geo=geo.toNonIndexed();indexed.dispose();}for(const a of Object.keys(geo.attributes))if(a!=="position"&&a!=="normal")geo.deleteAttribute(a);if(!geo.attributes.normal)geo.computeVertexNormals();const key=material.uuid;if(!batches.has(key))batches.set(key,{material,geometries:[]});batches.get(key)!.geometries.push(geo);});
+   const mergedRoot=new THREE.Group();for(const batch of batches.values()){const geo=mergeGeometries(batch.geometries,false);if(geo){const mesh=new THREE.Mesh(geo,batch.material.clone());mesh.castShadow=true;mesh.receiveShadow=true;mergedRoot.add(mesh);}batch.geometries.forEach(g=>g.dispose());}
+   for(const source of [root,gltf.scene])source.traverse(o=>{if(o instanceof THREE.Mesh){o.geometry.dispose();(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose());}});
+   if(!mergedRoot.children.length)throw new Error("3D 메시를 구성하지 못했습니다.");
+   model=mergedRoot;scene.add(model);setStatus("ready");setReady(true);
+  })().catch(e=>{if(!cancelled){setStatus("error");setError(e instanceof Error?e.message:"3D 장면을 불러오지 못했습니다.");}});
+  return()=>{cancelled=true;dispose();};
+ },[chapter,reduced,quality,cover]);
+ const points=landmarks[chapter];const current=selected===null?null:points[selected];
+ function inspect(p:Landmark){callback.current(p.id);}
+ return <section className={"world-stage "+(cover?"world-cover":"")} aria-label="3D 장면 탐색">
+ <div className="webgl-host" ref={host} tabIndex={0}/>
+ <div className="world-topline"><span><i/> REALTIME 3D · {["하늘의 경계","무너진 집","세 친구의 원","항변의 자리","통제 밖의 생명","대답 없는 법정"][chapter]}</span><button onClick={()=>setQuality(q=>q==="low"?"balanced":"low")} className="world-tool">화질 {quality==="low"?"낮음":"균형"}</button></div>
+ {status==="loading"&&<div className="world-loading" role="status"><span className="loading-orbit"/><p>공간을 불러오는 중</p><small>실제 3D 모델과 조명을 준비합니다.</small></div>}
+ {status==="error"&&<div className="world-loading" role="alert"><p>{error}</p><button className="outline-button" onClick={()=>setQuality(q=>q==="low"?"balanced":"low")}>다시 불러오기</button>{!cover&&<button className="text-link" onClick={()=>inspect(points[activePoint])}>텍스트 모드로 이 장면 이어가기</button>}</div>}
+ {ready&&<><div className="camera-tools"><button aria-label="왼쪽으로 회전" onClick={()=>api.current?.rotate(.3)}>↶</button><button aria-label="오른쪽으로 회전" onClick={()=>api.current?.rotate(-.3)}>↷</button><button aria-label="확대" onClick={()=>api.current?.zoom(.8)}>＋</button><button aria-label="축소" onClick={()=>api.current?.zoom(1.2)}>－</button><button aria-label="시점 초기화" onClick={()=>api.current?.reset()}>⌂</button></div>
+ {!cover&&<div className="landmark-strip" aria-label="관찰할 장소">{points.map((p,i)=><button key={p.id} onClick={()=>api.current?.focus(i)} className={(i===activePoint?"needed ":"")+(selected===i?"focused ":"")+(inspected.includes(p.id)?"seen":"")} aria-pressed={selected===i}><span>{inspected.includes(p.id)?"✓":String(i+1).padStart(2,"0")}</span>{p.label}{i===activePoint&&<small>이번 시선</small>}</button>)}</div>}
+ {!cover&&current&&<div className="observation-card"><button className="observation-close" aria-label="관찰 창 닫기" onClick={()=>setSelected(null)}>×</button><span>관찰 · {current.label}</span><p>{current.observation}</p><button className="observe-button" disabled={selected!==activePoint&&!inspected.includes(current.id)} onClick={()=>inspect(current)}>{inspected.includes(current.id)?"관찰한 장면":selected!==activePoint?"이번 시선의 장소부터 살펴보세요":"이 자리에 머무르기"} <span>→</span></button></div>}
+ <div className="world-help">드래그 · 회전　 두 손가락 / 휠 · 확대　 WASD · 시점 이동</div></>}
+ </section>;
+}

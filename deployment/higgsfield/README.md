@@ -1,0 +1,1 @@
+Higgsfield TanStack hosting adapter excerpts from deployment commit 96b3b0f. These are documentation, not part of the portable Vite build. Platform workspace packages are provided by the Higgsfield scaffold. The game source and binary assets are shared unchanged.
