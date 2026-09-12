@@ -4,7 +4,7 @@ for(const width of [1440,390,320,960]){
  const ctx=await browser.newContext({viewport:{width,height:1000},reducedMotion:'reduce'}),p=await ctx.newPage();const errors=[];p.on('pageerror',e=>errors.push(e.message));p.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
  await p.goto((process.env.APP_URL||'http://localhost:5173')+'/?debug');await p.waitForSelector('.novel.reduced');await p.waitForFunction(()=>JSON.parse(document.querySelector('.webgl-host').dataset.renderStats||'{}').model,{},{timeout:60000});
  if(width===1440)await p.screenshot({path:'qa/final-cover.png',fullPage:true});
- await p.getByRole('button',{name:'이야기 시작하기',exact:true}).click();
+ await p.getByRole('button',{name:'이야기 시작하기',exact:true}).click();await p.getByRole('button',{name:'탐색으로 이어가기',exact:true}).first().click();
  for(let panel=0;panel<(width===960?4:24);panel++){
   await p.locator('.landmark-strip').waitFor({timeout:60000});
   await p.waitForFunction(ch=>{const s=JSON.parse(document.querySelector('.webgl-host').dataset.renderStats||'{}');return s.model&&s.chapter===ch&&s.textures>=6},Math.floor(panel/4));
@@ -24,7 +24,7 @@ for(const width of [1440,390,320,960]){
   if(await p.locator('.choice').first().isDisabled())throw Error('observation '+panel);
   if(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('overflow '+width);
   await p.locator('.choice').nth(panel%2).click();await p.locator('.next-button').click();
-  if(panel%4===3&&panel<23)await p.getByRole('button',{name:'다음 장으로',exact:true}).click();
+  if(panel%4===3&&panel<23){await p.getByRole('button',{name:'다음 장으로',exact:true}).click();await p.getByRole('button',{name:'탐색으로 이어가기',exact:true}).first().click();}
  }
  if(width!==960){await p.locator('.ending-body').waitFor();if(await p.locator('.reflection-cards article').count()!==4)throw Error('ending');}
  if(errors.length)throw Error(JSON.stringify(errors));

@@ -13,3 +13,11 @@
 - Known limits: stylized sculptural models, no skeletal animation/lip-sync/physics; no full Safari/Android hardware matrix; no professional theological sign-off.
 
 Run qa/playthrough.cjs and qa/accessibility.cjs as described in qa/README.md.
+
+
+## 설명 애니메이션 추가 검증 (2026-09-12)
+- 6편, 37컷 탐색 및 완료 상태 확인.
+- 1440/390/320px 전체 24패널 완주, 960px 첫 장 검증. 설명을 건너뛴 뒤의 진행, 장별 다시 보기, 상태 유지 확인.
+- 모바일 axe WCAG 2 A/AA 및 2.1 AA 위반 0건. 정지/재생/스크럽/ESC/동작 줄이기/3D 로딩 실패 대본 경로 확인.
+- 모의 음성 엔진으로 발화 종료까지 컷 유지 및 정지·닫기의 취소 동작 검증. 실제 한국어 음성 품질은 기기별입니다.
+- 기본 게임 테스트 6개, 426개 assertion 통과. 소프트웨어 WebGL 검증이며 실제 휴대폰 프레임률 보장은 하지 않습니다.
