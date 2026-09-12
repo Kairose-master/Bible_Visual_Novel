@@ -1,4 +1,4 @@
-export type Landmark={id:string;label:string;position:[number,number,number];observation:string};
+export type Landmark={id:string;label:string;position:[number,number,number];view?:[number,number,number];observation:string};
 export const landmarks:Landmark[][]=[
   [
     {
@@ -6,18 +6,18 @@ export const landmarks:Landmark[][]=[
       "label": "멀리 열린 경계",
       "position": [
         0,
-        0.4,
-        0
+        3,
+        -12
       ],
       "observation": "이 세계가 욥의 잘못을 증명하지는 않습니다."
     },
     {
       "id": "0-1",
-      "label": "세 겹의 지평",
+      "label": "겹겹의 지평",
       "position": [
-        4.1,
-        0.6,
-        0
+        5,
+        1,
+        -18
       ],
       "observation": "보상과 경건의 관계를 묻는 말이 울립니다."
     },
@@ -25,9 +25,9 @@ export const landmarks:Landmark[][]=[
       "id": "0-2",
       "label": "갈라진 바위",
       "position": [
-        -4,
-        1,
-        -5
+        -10,
+        2,
+        0
       ],
       "observation": "까닭 없이 치는 일이라는 본문의 긴장이 남습니다."
     },
@@ -37,7 +37,7 @@ export const landmarks:Landmark[][]=[
       "position": [
         0,
         0.4,
-        2
+        -3
       ],
       "observation": "당신은 보지만 욥에게 알려 줄 수 없습니다."
     }
@@ -61,7 +61,12 @@ export const landmarks:Landmark[][]=[
         1.1,
         0.4
       ],
-      "observation": "욥은 재 가운데 앉아 있습니다. 몸도 마음도 아픕니다."
+      "observation": "욥은 재 가운데 앉아 있습니다. 몸도 마음도 아픕니다.",
+      "view": [
+        3,
+        2,
+        5
+      ]
     },
     {
       "id": "1-2",
@@ -93,7 +98,12 @@ export const landmarks:Landmark[][]=[
         1.6,
         -0.8
       ],
-      "observation": "경험에서 길어 올린 위로가 어떻게 혐의가 되는지 듣습니다."
+      "observation": "경험에서 길어 올린 위로가 어떻게 혐의가 되는지 듣습니다.",
+      "view": [
+        -4,
+        2,
+        4
+      ]
     },
     {
       "id": "2-1",
@@ -103,7 +113,12 @@ export const landmarks:Landmark[][]=[
         1.6,
         -2.2
       ],
-      "observation": "질서를 지키려는 확신이 유족에게 닿습니다."
+      "observation": "질서를 지키려는 확신이 유족에게 닿습니다.",
+      "view": [
+        4,
+        2,
+        4
+      ]
     },
     {
       "id": "2-2",
@@ -113,7 +128,12 @@ export const landmarks:Landmark[][]=[
         1.6,
         3
       ],
-      "observation": "인간의 한계를 말하면서 욥의 죄는 안다고 확신합니다."
+      "observation": "인간의 한계를 말하면서 욥의 죄는 안다고 확신합니다.",
+      "view": [
+        3,
+        2,
+        -5
+      ]
     },
     {
       "id": "2-3",
@@ -123,7 +143,12 @@ export const landmarks:Landmark[][]=[
         1.2,
         0
       ],
-      "observation": "옳은 말들 사이에서 한 사람의 증언이 좁아집니다."
+      "observation": "옳은 말들 사이에서 한 사람의 증언이 좁아집니다.",
+      "view": [
+        5,
+        3,
+        7
+      ]
     }
   ],
   [
@@ -173,9 +198,9 @@ export const landmarks:Landmark[][]=[
       "id": "4-0",
       "label": "폭풍의 능선",
       "position": [
-        0,
-        3.7,
-        -7
+        -10,
+        4,
+        -9
       ],
       "observation": "하나님의 형상을 만들지 않고 창조 세계의 규모를 바라봅니다."
     },
@@ -183,9 +208,9 @@ export const landmarks:Landmark[][]=[
       "id": "4-1",
       "label": "사람 없는 물가",
       "position": [
-        -5,
-        0.5,
-        -2
+        -6,
+        0.7,
+        -3
       ],
       "observation": "사람이 보지 않는 곳에서도 생명은 이어집니다."
     },
@@ -193,19 +218,24 @@ export const landmarks:Landmark[][]=[
       "id": "4-2",
       "label": "베헤못과 리워야단",
       "position": [
-        -2.7,
-        1,
-        0
+        -4.5,
+        1.5,
+        0.7
       ],
-      "observation": "이 생명들은 쓰러뜨릴 적도 길들일 소유물도 아닙니다."
+      "observation": "이 생명들은 쓰러뜨릴 적도 길들일 소유물도 아닙니다.",
+      "view": [
+        6,
+        3,
+        8
+      ]
     },
     {
       "id": "4-3",
       "label": "깊은 바다",
       "position": [
-        3.4,
+        5.2,
         0.8,
-        -1.4
+        -3.1
       ],
       "observation": "이름을 붙이는 것과 모두 이해하는 것은 다릅니다."
     }
@@ -236,7 +266,7 @@ export const landmarks:Landmark[][]=[
       "label": "함께 먹는 자리",
       "position": [
         0,
-        0.7,
+        1.3,
         0
       ],
       "observation": "회복은 상실을 없던 일로 만드는 거래가 아닙니다."

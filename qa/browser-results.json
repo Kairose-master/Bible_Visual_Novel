@@ -1,1 +1,242 @@
-[{"width":1440,"panel":0,"stats":{"fps":14,"calls":13,"triangles":14882,"model":true,"chapter":0}},{"width":1440,"panel":4,"stats":{"fps":0,"calls":26,"triangles":23198,"model":true,"chapter":1}},{"width":1440,"panel":8,"stats":{"fps":13,"calls":26,"triangles":19578,"model":true,"chapter":2}},{"width":1440,"panel":12,"stats":{"fps":0,"calls":24,"triangles":11466,"model":true,"chapter":3}},{"width":1440,"panel":16,"stats":{"fps":0,"calls":17,"triangles":13610,"model":true,"chapter":4}},{"width":1440,"panel":20,"stats":{"fps":0,"calls":20,"triangles":8870,"model":true,"chapter":5}},{"width":1440,"complete":true,"errors":[],"storage":{"local":0,"session":0,"cookie":""}},{"width":390,"panel":0,"stats":{"fps":0,"calls":13,"triangles":14882,"model":true,"chapter":0}},{"width":390,"panel":4,"stats":{"fps":0,"calls":26,"triangles":23198,"model":true,"chapter":1}},{"width":390,"panel":8,"stats":{"fps":0,"calls":25,"triangles":19194,"model":true,"chapter":2}},{"width":390,"panel":12,"stats":{"fps":0,"calls":21,"triangles":10026,"model":true,"chapter":3}},{"width":390,"panel":16,"stats":{"fps":0,"calls":17,"triangles":13610,"model":true,"chapter":4}},{"width":390,"panel":20,"stats":{"fps":0,"calls":20,"triangles":8870,"model":true,"chapter":5}},{"width":390,"complete":true,"errors":[],"storage":{"local":0,"session":0,"cookie":""}},{"width":320,"panel":0,"stats":{"fps":0,"calls":13,"triangles":14882,"model":true,"chapter":0}},{"width":320,"panel":4,"stats":{"fps":0,"calls":26,"triangles":23198,"model":true,"chapter":1}},{"width":320,"panel":8,"stats":{"fps":0,"calls":24,"triangles":18810,"model":true,"chapter":2}},{"width":320,"panel":12,"stats":{"fps":0,"calls":21,"triangles":10026,"model":true,"chapter":3}},{"width":320,"panel":16,"stats":{"fps":0,"calls":17,"triangles":13610,"model":true,"chapter":4}},{"width":320,"panel":20,"stats":{"fps":0,"calls":18,"triangles":8102,"model":true,"chapter":5}},{"width":320,"complete":true,"errors":[],"storage":{"local":0,"session":0,"cookie":""}}]
+{
+  "desktop": {
+    "width": 1440,
+    "complete": true,
+    "chapters": 6
+  },
+  "mobileAndBreakpoint": [
+    {
+      "width": 390,
+      "panel": 0,
+      "stats": {
+        "fps": 5,
+        "calls": 13,
+        "triangles": 87344,
+        "model": true,
+        "chapter": 0,
+        "textures": 7,
+        "camera": [
+          6.996866381571117,
+          4.663544069076343,
+          14.989703825162245
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "panel": 4,
+      "stats": {
+        "fps": 0,
+        "calls": 32,
+        "triangles": 217464,
+        "model": true,
+        "chapter": 1,
+        "textures": 12,
+        "camera": [
+          7.999999999999996,
+          4.8,
+          12.999999999999998
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "panel": 8,
+      "stats": {
+        "fps": 6,
+        "calls": 35,
+        "triangles": 199632,
+        "model": true,
+        "chapter": 2,
+        "textures": 12,
+        "camera": [
+          6.999999999999998,
+          3.8000000000000007,
+          10.5
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "panel": 12,
+      "stats": {
+        "fps": 0,
+        "calls": 28,
+        "triangles": 90292,
+        "model": true,
+        "chapter": 3,
+        "textures": 11,
+        "camera": [
+          7.000000000000002,
+          3.999999999999999,
+          13
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "panel": 16,
+      "stats": {
+        "fps": 0,
+        "calls": 20,
+        "triangles": 64408,
+        "model": true,
+        "chapter": 4,
+        "textures": 6,
+        "camera": [
+          10.000000000000002,
+          4.800000000000002,
+          14
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "panel": 20,
+      "stats": {
+        "fps": 0,
+        "calls": 22,
+        "triangles": 74884,
+        "model": true,
+        "chapter": 5,
+        "textures": 11,
+        "camera": [
+          7.000000000000001,
+          3.7999999999999976,
+          11
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "pass": true
+    },
+    {
+      "width": 320,
+      "panel": 0,
+      "stats": {
+        "fps": 0,
+        "calls": 13,
+        "triangles": 87344,
+        "model": true,
+        "chapter": 0,
+        "textures": 7,
+        "camera": [
+          6.996866381571118,
+          4.663544069076343,
+          14.989703825162248
+        ]
+      }
+    },
+    {
+      "width": 320,
+      "panel": 4,
+      "stats": {
+        "fps": 0,
+        "calls": 32,
+        "triangles": 217464,
+        "model": true,
+        "chapter": 1,
+        "textures": 12,
+        "camera": [
+          7.999999999999996,
+          4.8,
+          12.999999999999998
+        ]
+      }
+    },
+    {
+      "width": 320,
+      "panel": 8,
+      "stats": {
+        "fps": 0,
+        "calls": 35,
+        "triangles": 199632,
+        "model": true,
+        "chapter": 2,
+        "textures": 12,
+        "camera": [
+          6.999999999999998,
+          3.8000000000000007,
+          10.5
+        ]
+      }
+    },
+    {
+      "width": 320,
+      "panel": 12,
+      "stats": {
+        "fps": 0,
+        "calls": 28,
+        "triangles": 90292,
+        "model": true,
+        "chapter": 3,
+        "textures": 11,
+        "camera": [
+          7.000000000000002,
+          3.999999999999999,
+          13
+        ]
+      }
+    },
+    {
+      "width": 320,
+      "panel": 16,
+      "stats": {
+        "fps": 0,
+        "calls": 19,
+        "triangles": 64024,
+        "model": true,
+        "chapter": 4,
+        "textures": 6,
+        "camera": [
+          10.000000000000002,
+          4.800000000000002,
+          14
+        ]
+      }
+    },
+    {
+      "width": 320,
+      "panel": 20,
+      "stats": {
+        "fps": 0,
+        "calls": 22,
+        "triangles": 74884,
+        "model": true,
+        "chapter": 5,
+        "textures": 11,
+        "camera": [
+          7.000000000000001,
+          3.7999999999999976,
+          11
+        ]
+      }
+    },
+    {
+      "width": 320,
+      "pass": true
+    },
+    {
+      "width": 960,
+      "panel": 0,
+      "stats": {
+        "fps": 0,
+        "calls": 13,
+        "triangles": 87344,
+        "model": true,
+        "chapter": 0,
+        "textures": 7,
+        "camera": [
+          6.996866381571118,
+          4.663544069076343,
+          14.989703825162248
+        ]
+      }
+    },
+    {
+      "width": 960,
+      "pass": true
+    }
+  ]
+}

@@ -7,7 +7,8 @@
     "dev": "vite --host 0.0.0.0",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 0.0.0.0",
-    "test": "bun test ./tests/engine.test.ts"
+    "test": "bun test ./tests/engine.test.ts",
+    "assets:split": "node scripts/split-worlds.mjs"
   },
   "dependencies": {
     "react": "19.2.4",
@@ -22,6 +23,9 @@
     "@vitejs/plugin-react": "5.0.4",
     "tailwindcss": "4.2.1",
     "typescript": "5.9.3",
-    "vite": "7.3.6"
+    "vite": "7.3.6",
+    "@gltf-transform/core": "4.5.0",
+    "@gltf-transform/functions": "4.5.0",
+    "@gltf-transform/extensions": "4.5.0"
   }
 }

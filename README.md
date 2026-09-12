@@ -16,7 +16,7 @@ bun test
 표준 Vite 앱이므로 빌드된 dist를 정적 호스팅할 수 있습니다. 게임은 브라우저에서 작동하며 서버·계정·DB가 필요하지 않습니다.
 
 ## 플레이
-- 여섯 장의 공간을 드래그하여 회전하고 휠·핀치로 확대합니다.
+- 여섯 장의 공간을 드래그하여 회전하고 휠·핀치로 확대합니다. 장면 크게 보기로 대화창을 접어 공간 전체를 볼 수 있습니다.
 - 번호가 붙은 장소 또는 3D 링을 선택합니다. 이번 시선의 장소에서 ‘이 자리에 머무르기’를 누르면 대화 선택이 열립니다.
 - 24개의 관찰과 63개의 응답이 세 가지 내부 성찰 변수를 바꿉니다. 신앙 점수나 정답 판정은 없습니다.
 - 카메라는 화면 버튼 또는 장면에 초점을 둔 뒤 WASD/방향키/R로 조작할 수 있습니다. 응답은 Tab/Enter 또는 본문 초점에서 숫자 1–4로 선택합니다.
@@ -25,13 +25,14 @@ bun test
 - 선택·설정은 탭 메모리에만 존재합니다. 새로고침 시 초기화됩니다.
 
 ## 3D 에셋
-public/assets/job-worlds.glb: 직접 제작한 6개 장면, 466개 메시. Blender 원본 생성 코드: design/create-worlds.py. CHAPTER_0–CHAPTER_5 루트로 나뉘며 런타임에서 현재 장만 표시하고 재질별 메시를 병합합니다. 약 2.1 MB이며 외부 모델 서비스에 의존하지 않습니다.
-양식화된 고대 세계의 문학적 상상이며 고고학적 복원은 아닙니다. 인물은 조형적 캐릭터로, 모션 캡처·립싱크·물리 시뮬레이션은 포함하지 않습니다. 디자인용 생성 스크립트는 Higgsfield Blender artifacts API에서 실행하도록 작성되었습니다.
+public/assets/job-worlds.glb: 직접 제작한 6개 장면. 원형 디오라마 대신 연속 지형, 골목과 폐허, 회랑과 그늘막, 성문, 해안과 정원을 구성합니다. Blender 원본 생성 코드: design/create-worlds.py. scripts/split-worlds.mjs가 현재 장면만 남기고 사용하지 않는 메시·재질·텍스처를 제거합니다. CHAPTER_0–CHAPTER_5 루트로 나뉘며 런타임에서 현재 장만 표시하고 재질별 메시를 병합합니다. 마스터 파일은 4.74 MB이며 플레이할 때는 분리된 장별 파일(0.55–1.45 MB)만 로드합니다. 외부 모델 서비스에 의존하지 않습니다.
+양식화된 고대 세계의 문학적 상상이며 고고학적 복원은 아닙니다. 인물은 조형적 캐릭터로, 모션 캡처·립싱크·물리 시뮬레이션은 포함하지 않습니다. create-worlds.py → compose-environments.py → refine-environments.py 순서로 장면을 구성합니다. verify-architecture.py가 지지되지 않는 벽돌을 정리합니다. 디자인용 생성 스크립트는 Higgsfield Blender artifacts API에서 실행하도록 작성되었습니다.
 
 ## 구성
 src/game/content.ts — 6장·24패널·63선택, 본문과 해석 노트
 src/game/engine.ts — 관찰 및 응답 전이, 중복·오래된 입력 차단
 src/game/Stage3D.tsx — WebGL 렌더러, GLB 로더, 레이캐스팅, 카메라
+src/game/sceneArt.ts — 장면별 조명·대기·카메라·실시간 하늘
 src/game/landmarks.ts — 24개 조사 지점과 관찰문
 src/game/Game.tsx — 대화, 성찰, 접근성 설정
 
