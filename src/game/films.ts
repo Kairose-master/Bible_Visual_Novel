@@ -1,6 +1,7 @@
+import {cinemaAssets} from "./cinemaAssets";
 export type Shot = {speaker:string;text:string;ref:string;seconds:number;view:"wide"|"god"|"accuser"|"job"|"friends"|"sky";action:"listen"|"speak"|"challenge"|"grieve"|"reach"|"walk";note?:string};
 export type Film = {title:string;subtitle:string;chapter:number;summary:string;shots:Shot[]};
-export const films:Film[]=[
+const baseFilms:Film[]=[
 {title:"하늘에서 시작된 질문",subtitle:"욥기 1:1–12 · 독자만 아는 장면",chapter:0,summary:"욥은 악행 때문에 벌을 받는 인물로 소개되지 않습니다. 독자는 하늘의 대화를 보지만 욥은 그 대화를 듣지 못합니다.",shots:[
 {speaker:"해설",text:"욥은 우스 땅에 살던 사람입니다. 부유했고 가족이 많았으며, 하나님을 경외하고 악을 멀리했습니다.",ref:"1:1–5",seconds:11,view:"wide",action:"listen"},
 {speaker:"해설",text:"이야기는 하늘의 모임으로 옮겨 갑니다. 하나님 앞에 사탄, 곧 욥의 진실함을 의심하는 고발자가 나타납니다.",ref:"1:6",seconds:11,view:"wide",action:"walk",note:"‘사탄’은 이 대목에서 고발자·대적자의 역할로 등장합니다. 인물의 외모는 본문에 없습니다."},
@@ -51,5 +52,6 @@ export const films:Film[]=[
 {speaker:"해설",text:"회복을 잃은 자녀들의 대체로 여기지는 않으려 합니다. 모든 고통의 이유를 안다고 말하기보다, 고통받는 사람 곁에 어떻게 설지 묻습니다.",ref:"42장 · 작품의 성찰",seconds:14,view:"job",action:"listen",note:"마지막 문장은 성경의 직접 인용이 아니라 이 작품이 제안하는 성찰입니다."}
 ]}
 ];
+export const films:Film[]=baseFilms.map((f,i)=>({...f,shots:f.shots.map((s,k)=>({...s,seconds:cinemaAssets[i].seconds[k]??s.seconds}))}));
 export const duration=(film:Film)=>film.shots.reduce((s,x)=>s+x.seconds,0);
 export function locate(film:Film,time:number){let start=0;for(let i=0;i<film.shots.length;i++){if(time<start+film.shots[i].seconds||i===film.shots.length-1)return {index:i,start,progress:Math.min(1,Math.max(0,(time-start)/film.shots[i].seconds))};start+=film.shots[i].seconds;}return {index:0,start:0,progress:0};}

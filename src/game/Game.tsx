@@ -3,15 +3,16 @@ import { beats, chapters, layerLabels, reflectionQuestions } from "./content";
 import { initialState, reducer, summarize } from "./engine";
 import Stage3D from "./Stage3D";
 import Cinema from "./Cinema";
+import CinematicMedia from "./CinematicMedia";
 import {landmarks} from "./landmarks";
 const assetBase = "./assets/";
 const images: Record<string,{src:string;alt:string}> = {
- sky:{src:assetBase+"sky.webp",alt:"사람의 형상 없이 거대한 구름과 빛으로 표현한 하늘"},
- ruins:{src:assetBase+"ruins.webp",alt:"무너진 집과 재 가운데 앉아 있는 욥"},
- friends:{src:assetBase+"friends.webp",alt:"욥을 둘러앉은 세 친구의 반복되는 원형 구도"},
- storm:{src:assetBase+"storm.webp",alt:"작은 사람 너머로 수직으로 솟은 거대한 폭풍"},
- creatures:{src:assetBase+"creatures.webp",alt:"인간에게 길들여지지 않은 물가와 바다의 거대한 생명"},
- silence:{src:assetBase+"silence.webp",alt:"폭풍이 지나간 뒤, 비어 있는 돌과 조용한 새벽"}
+ sky:{src:assetBase+"cinema/scene-0.webp",alt:"하나님과 고발자의 하늘 법정 대화를 상상한 장면"},
+ ruins:{src:assetBase+"cinema/scene-1.webp",alt:"무너진 집과 재 가운데 앉아 있는 욥"},
+ friends:{src:assetBase+"cinema/scene-2.webp",alt:"욥을 둘러앉은 세 친구의 반복되는 원형 구도"},
+ storm:{src:assetBase+"cinema/scene-4.webp",alt:"작은 사람 너머로 수직으로 솟은 거대한 폭풍"},
+ creatures:{src:assetBase+"cinema/scene-4.webp",alt:"인간에게 길들여지지 않은 물가와 바다의 거대한 생명"},
+ silence:{src:assetBase+"cinema/scene-5.webp",alt:"폭풍이 지나간 뒤, 비어 있는 돌과 조용한 새벽"}
 };
 function Icon({kind}:{kind:"sound"|"settings"|"book"|"arrow"}) {
  return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">{kind==="sound"?<><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 8q6 4 0 8"/></>:kind==="settings"?<><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3" fill="currentColor"/><circle cx="16" cy="17" r="3" fill="currentColor"/></>:kind==="book"?<><path d="M12 5v15M3 4q5-2 9 1 4-3 9-1v14q-5-2-9 2-4-4-9-2z"/></>:<path d="M4 12h15m-5-5 5 5-5 5"/>}</svg>
@@ -72,7 +73,7 @@ export default function Game(){
  <header className="topbar"><button className="brand" onClick={()=>{if(!isCover)setModal("restart");}} aria-label="작품 처음 화면"><span className="brand-mark">J</span><span>THE BOOK OF JOB<small>대답 없는 법정</small></span></button><div className="tools"><button className="icon-button" aria-label={sound?"음향 끄기":"음향 켜기"} aria-pressed={sound} onClick={toggleSound}><Icon kind="sound"/><span className="tool-label">{sound?"ON":"OFF"}</span></button><button className="icon-button" onClick={()=>setModal("settings")} aria-label="읽기 설정"><Icon kind="settings"/></button></div></header>
  <main id="main">
  {isCover?<section className="cover">
- <div className="cover-art">{!film&&<Stage3D chapter={1} activePoint={0} reduced={reduced} onInspect={()=>{}} inspected={[]} cover/>}</div>
+ <div className="cover-art">{!film&&<CinematicMedia chapter={1} playing={!reduced} reduced={reduced} ambient/>}</div>
  <div className="cover-copy"><div className="eyebrow"><span/>AN INTERACTIVE 3D STORY · EPISODE 01</div><p className="cover-kicker">욥기</p><h1>대답 없는<br/><em>법정</em></h1><p className="english-title">When God Does Not Explain</p><p className="cover-description">고난의 이유를 찾는 대신,<br/>설명할 수 없는 사람 곁에 머무는 이야기.</p><button className="start-button" onClick={()=>setFilm({chapter:0,after:"start"})}>이야기 시작하기 <Icon kind="arrow"/></button><button className="text-link cinema-entry" onClick={()=>setFilm({chapter:0,after:null})}>▶ 욥기 설명 애니메이션 · 6편 모두 보기</button><div className="cover-facts"><span>6개의 장</span><span>설명·성찰 포함 약 20–27분</span><span>3D 탐색 · 24개의 시선</span></div></div>
  <div className="cover-bottom"><span>“설명하지 못하는 고통 곁에 머무를 수 있는가?”</span><button className="text-link" onClick={()=>setModal("about")}>작품과 읽기 안내 <span>↗</span></button></div>
  </section>:isEnd?<section className="ending">
@@ -99,7 +100,7 @@ export default function Game(){
  {audioError&&<p role="status" className="audio-error">{audioError}</p>}
  {modal==="settings"&&<Modal title="읽기 설정" close={()=>setModal(null)}><div className="setting-row"><label htmlFor="font-size">글자 크기</label><select id="font-size" value={font} onChange={e=>setFont(Number(e.target.value))}><option value={1}>기본</option><option value={1.125}>크게</option><option value={1.25}>더 크게</option></select></div><label className="setting-row">애니메이션 줄이기<input type="checkbox" checked={reduced} onChange={e=>setReduced(e.target.checked)}/></label><label className="setting-row">음향 켜기<input type="checkbox" checked={sound} onChange={toggleSound}/></label><p className="muted">터치하거나 Tab으로 버튼을 선택한 뒤 Enter / Space를 누르세요. 본문에 초점이 있을 때 숫자 1–4로 응답할 수 있습니다.</p><p className="muted">설정과 선택은 이 탭의 메모리에서만 사용합니다. 새로고침하면 처음부터 시작합니다.</p></Modal>}
  {modal==="notes"&&<Modal title={chapter.title+" · 읽기 노트"} close={()=>setModal(null)}>{notes}</Modal>}
- {modal==="about"&&<Modal title="작품과 읽기 안내" close={()=>setModal(null)}><p>욥기: 대답 없는 법정<br/><em>The Book of Job: When God Does Not Explain</em></p><p>이 작품은 욥기를 바탕으로 한 3D 탐색형 인터랙티브 노벨입니다. Blender로 제작한 여섯 장의 실제 GLB 장면을 회전하고 확대하며 24개의 장소와 사물을 관찰합니다. 관찰 뒤에 대화 선택이 열립니다. 장면은 고대 세계를 상상한 양식화된 조형이며, 고고학적 복원이나 인물의 실제 외모를 주장하지 않습니다.</p><p>가족의 죽음, 질병, 깊은 탄식이 등장합니다. 필요할 때 멈추거나 창을 닫아도 됩니다. 고통스러운 장면을 잔혹하게 묘사하지 않습니다.</p><p>6편·37컷의 설명 애니메이션은 기본 약 6분 40초입니다. 6장·24패널과 질문·해설까지 함께 읽으면 약 20–27분을 예상합니다. 읽는 속도에 따라 달라지며 기다리도록 강제하지 않습니다.</p><p>성경 문장의 장문 복제를 피하고 한국어로 새로 요약했습니다. 욥기 28장의 지혜 시와 엘리후의 연설(32–37장) 등은 에피소드 길이상 압축했습니다. 등장인물의 외모와 ‘법정’의 시각적 구도는 문학적 상상입니다.</p><p>로그인·DB·분석 도구가 없으며 선택이나 개인 정보를 전송·저장하지 않습니다. 호스팅 제공자의 일반적인 접속 처리는 별개입니다.</p><h3>본문 및 편집 참고</h3><ul><li><a href="https://www.biblegateway.com/passage/?search=Job+1-21&version=KJV" target="_blank" rel="noreferrer">욥기 1–21장 · 성경 본문</a></li><li><a href="https://www.biblegateway.com/passage/?search=Job+22-42&version=KJV" target="_blank" rel="noreferrer">욥기 22–42장 · 성경 본문</a></li><li><a href="https://enterthebible.org/courses/job/lessons/summary-of-job/" target="_blank" rel="noreferrer">Luther Seminary · 욥기 개관</a></li></ul><p className="muted">3D: 직접 제작한 Blender로 구성한 연속 지형·건축·인물과 표면 질감, 장면 6개. Three.js 실시간 조명과 그림자. 장면 원본과 생성 코드는 저장소에 포함합니다. 이미지: Higgsfield 생성 일러스트 5종과 재구도. 음향: 브라우저에서 합성한 낮은 바람. 본문·해설은 전문 목회자나 성서학자의 최종 감수를 받지 않았습니다.</p></Modal>}
+ {modal==="about"&&<Modal title="작품과 읽기 안내" close={()=>setModal(null)}><p>욥기: 대답 없는 법정<br/><em>The Book of Job: When God Does Not Explain</em></p><p>이 작품은 욥기를 바탕으로 한 3D 탐색형 인터랙티브 노벨입니다. Blender로 제작한 여섯 장의 실제 GLB 장면을 회전하고 확대하며 24개의 장소와 사물을 관찰합니다. 관찰 뒤에 대화 선택이 열립니다. 장면은 고대 세계를 상상한 양식화된 조형이며, 고고학적 복원이나 인물의 실제 외모를 주장하지 않습니다.</p><p>가족의 죽음, 질병, 깊은 탄식이 등장합니다. 필요할 때 멈추거나 창을 닫아도 됩니다. 고통스러운 장면을 잔혹하게 묘사하지 않습니다.</p><p>6편·37컷의 설명 애니메이션은 한국어 합성 음성과 시네마틱 영상을 함께 제공합니다. 6장·24패널과 질문·해설까지 함께 읽으면 약 20–27분을 예상합니다. 읽는 속도에 따라 달라지며 기다리도록 강제하지 않습니다.</p><p>성경 문장의 장문 복제를 피하고 한국어로 새로 요약했습니다. 욥기 28장의 지혜 시와 엘리후의 연설(32–37장) 등은 에피소드 길이상 압축했습니다. 등장인물의 외모와 ‘법정’의 시각적 구도는 문학적 상상입니다.</p><p>로그인·DB·분석 도구가 없으며 선택이나 개인 정보를 전송·저장하지 않습니다. 호스팅 제공자의 일반적인 접속 처리는 별개입니다.</p><h3>본문 및 편집 참고</h3><ul><li><a href="https://www.biblegateway.com/passage/?search=Job+1-21&version=KJV" target="_blank" rel="noreferrer">욥기 1–21장 · 성경 본문</a></li><li><a href="https://www.biblegateway.com/passage/?search=Job+22-42&version=KJV" target="_blank" rel="noreferrer">욥기 22–42장 · 성경 본문</a></li><li><a href="https://enterthebible.org/courses/job/lessons/summary-of-job/" target="_blank" rel="noreferrer">Luther Seminary · 욥기 개관</a></li></ul><p className="muted">3D: 직접 제작한 Blender로 구성한 연속 지형·건축·인물과 표면 질감, 장면 6개. Three.js 실시간 조명과 그림자. 장면 원본과 생성 코드는 저장소에 포함합니다. 이미지·영상: Higgsfield 생성 시네마틱 장면 6종. 한국어 음성: Arthur 합성 음성, 대본 확인 및 편집. 배경 음향: 브라우저에서 합성한 낮은 바람. 본문·해설은 전문 목회자나 성서학자의 최종 감수를 받지 않았습니다.</p></Modal>}
  {modal==="restart"&&<Modal title="처음부터 다시 읽을까요?" close={()=>setModal(null)}><p>이번 선택과 성찰은 지워지고 표지로 돌아갑니다.</p><div className="end-actions"><button className="outline-button" onClick={()=>setModal(null)}>계속 읽기</button><button className="start-button" onClick={()=>{dispatch({type:"restart"});setModal(null);}}>처음으로 돌아가기</button></div></Modal>}
  </div>;
 }

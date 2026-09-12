@@ -2,7 +2,7 @@ const {chromium}=require('playwright');
 (async()=>{const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||undefined,args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});const results=[];
 for(const width of [1440,390,320,960]){
  const ctx=await browser.newContext({viewport:{width,height:1000},reducedMotion:'reduce'}),p=await ctx.newPage();const errors=[];p.on('pageerror',e=>errors.push(e.message));p.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
- await p.goto((process.env.APP_URL||'http://localhost:5173')+'/?debug');await p.waitForSelector('.novel.reduced');await p.waitForFunction(()=>JSON.parse(document.querySelector('.webgl-host').dataset.renderStats||'{}').model,{},{timeout:60000});
+ await p.goto((process.env.APP_URL||'http://localhost:5173')+'/?debug');await p.waitForSelector('.novel.reduced');await p.locator('.cover-art .cinematic-media img').waitFor();
  if(width===1440)await p.screenshot({path:'qa/final-cover.png',fullPage:true});
  await p.getByRole('button',{name:'이야기 시작하기',exact:true}).click();await p.getByRole('button',{name:'탐색으로 이어가기',exact:true}).first().click();
  for(let panel=0;panel<(width===960?4:24);panel++){
